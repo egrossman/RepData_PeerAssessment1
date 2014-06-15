@@ -1,17 +1,45 @@
 # Reproducible Research: Peer Assessment 1
+## User: egrossman
+Welcome! Here is my first project using RMarkdown.
 
+I will be showing you how I analyze and transform data. For this specific data set, I am using data that is a result of how many steps a subject has taken. This data is taken in 5 second intervals across multiple days. Each row contains:
+
+* The **date** this data was taken
+* The Five second **interval** that the number of steps were recorded
+* The number of **steps** that were taken in this interval
 
 ## Loading and preprocessing the data
+This section is pretty stright-forward. I've loaded the dataset into R using the read.csv command. I've also defined the classes of each column.
 
+```{r}
+activityData <- read.csv('activity.csv',colClasses=c('integer','Date','integer'))
+```
 
 
 ## What is mean total number of steps taken per day?
+In order to generate the number of steps per day, I had to first take the sum of the **steps** for each **date**. The aggregate function does this nicely.
 
+I've also  color coded the histogram as blue and made 10 break points for the frequency.
 
+```{r}
+stepsPerDay<-aggregate(steps ~date ,activityData, sum)
+hist(x=stepsPerDay[,"steps"],main='Frequency of Steps',xlab='Steps per day',col='BLUE',breaks=10)
+```
 
 ## What is the average daily activity pattern?
 
+```{r}
+averageSteps<-aggregate(steps ~interval ,activityData, mean)
+## Get max value
+maxSteps <- max(averageSteps$steps)
+## Get interval associated with max
+maxInterval<-averageSteps[which(averageSteps$steps == maxSteps),'interval']
 
+## Plot data
+with(data=averageSteps,plot(interval,steps,type='l',xlab='Intervals(seconds)'))
+points(maxInterval,maxSteps,pch=16,col='RED',lwd=20)
+text(x=maxInterval+220,y=maxSteps,labels=paste('Max Value    (',maxInterval,',',maxSteps,')'),cex=0.8)
+```
 
 ## Imputing missing values
 
